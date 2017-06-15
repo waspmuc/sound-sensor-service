@@ -55,7 +55,13 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
+<<<<<<< HEAD
 .envo
 
 # IntelliJ
 .idea
+=======
+.env
+.idea/workspace.xml
+.idea/scopes/scope_settings.xml
+>>>>>>> master
