@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
   version: "0.0.2"
-  title: Sonic Sensor Service
+  title: Sound Sensor Service
 # during dev, should point to your local machine
-host: localhost:10010
+host: localhost:10020
 # basePath prefixes all resource paths 
 basePath: /
 # 
@@ -22,7 +22,7 @@ paths:
     # binds a127 app logic to a route
     x-swagger-router-controller: SensorController
     get:
-      description: Returns current value of the sonic sensor to the caller
+      description: Returns current value of the sound sensor to the caller
       # used as the method name of the controller
       operationId: sensor
       responses:

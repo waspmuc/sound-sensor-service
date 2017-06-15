@@ -19,12 +19,11 @@ var GrovePi = require('node-grovepi').GrovePi
 var Commands = GrovePi.commands
 var Board = GrovePi.board
 
-/* Access sonic sensor module */
-var UltrasonicDigitalSensor = GrovePi.sensors.UltrasonicDigital
-var LightAnalogSensor = GrovePi.sensors.LightAnalog
+/* Access analog sensor module */
+var SoundSensor = GrovePi.sensors.LightAnalog
 var init = false;
 
-const sampleSize = 2;
+const sampleSize = 500;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -48,9 +47,7 @@ module.exports = {
   Param 1: a handle to the request object
   Param 2: a handle to the response object
  */
-var value
-var ultraSonicSensor1, ultraSonicSensor2, ultraSonicSensor3, ultraSonicSensor4
-var lightSensor
+var soundSensor
 
 function getSensorData(req, res) {
 
@@ -63,11 +60,7 @@ function getSensorData(req, res) {
         onInit: function(response) {
             if (response) {
                 console.log('GrovePi Version :: ' + board.version())
-                ultraSonicSensor1 = new UltrasonicDigitalSensor(2)
-                ultraSonicSensor2 = new UltrasonicDigitalSensor(3)
-                ultraSonicSensor3 = new UltrasonicDigitalSensor(4)
-                ultraSonicSensor4 = new UltrasonicDigitalSensor(8)
-                lightSensor = new LightAnalogSensor(0)
+                soundSensor = new SoundSensor(0)
 
             }
         }
@@ -78,49 +71,14 @@ function getSensorData(req, res) {
        init = true;
    }
 
-
-    var avgSensor1 = 0;
-    var avgSensor2 = 0;
-    var avgSensor3 = 0;
-    var avgSensor4 = 0;
-
-    console.log(lightSensor.read())
-
-    var avglightSensor = 0
-    for (var i = 0; i < 1000; i++) {
-        var temp = lightSensor.read()
-        if (!isNaN(temp))
-            avglightSensor += temp
-    }
-
-    console.log("avg:" + Math.round(avglightSensor / 1000))
-
-
-    /*console.log('Light Analog Sensor (start watch)')
-    lightSensor.on('change', function(res) {
-        console.log('Light onChange value=' + res)
-    })
-    lightSensor.watch()
-*/
+    var avgSoundSensor = 0
     for (var i = 0; i < sampleSize; i++) {
-        avgSensor1 += ultraSonicSensor1.read()
-        avgSensor2 += ultraSonicSensor2.read()
-        avgSensor3 += ultraSonicSensor3.read()
-        avgSensor4 += ultraSonicSensor4.read()
+        var temp = soundSensor.read()
+        if (!isNaN(temp))
+            avgSoundSensor += temp
     }
 
-    avgSensor1 = avgSensor1 / sampleSize
-    avgSensor2 = avgSensor2 / sampleSize
-    avgSensor3 = avgSensor3 / sampleSize
-    avgSensor4 = avgSensor4 / sampleSize
-
-    avgSensor1 = Math.round(avgSensor1)
-    avgSensor2 = Math.round(avgSensor2)
-    avgSensor3 = Math.round(avgSensor3)
-    avgSensor4 = Math.round(avgSensor4)
-
-
-    var dataStr = [{"sensor1" : avgSensor1, "sensor2" : avgSensor2, "sensor3" : avgSensor3, "sensor4" : avgSensor4}]
+    var dataStr = [{"soundsensor" : Math.round(avgSoundSensor / sampleSize)}]
 
     res.json(dataStr)
 }

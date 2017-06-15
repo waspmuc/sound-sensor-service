@@ -2,9 +2,9 @@
   "swagger": "2.0",
   "info": {
     "version": "0.0.4",
-    "title": "Sonic Sensor Service on RaspberryPi"
+    "title": "Sound Sensor Service on RaspberryPi"
   },
-  "host": "localhost:10010",
+  "host": "localhost:10020",
   "basePath": "/",
   "schemes": [
     "http",
@@ -19,7 +19,7 @@
   "paths": {
     "/data": {
       "get": {
-        "description": "Returns current value of the sonic sensor to the caller",
+        "description": "Returns current value of the sound sensor to the caller",
         "operationId": "sensor",
         "responses": {
           "200": {
