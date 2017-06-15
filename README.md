@@ -1,1 +1,1 @@
-# sound-sensor-service
+# Skeleton project for Swagger
