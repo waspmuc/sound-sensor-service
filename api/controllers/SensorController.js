@@ -20,8 +20,9 @@ var Commands = GrovePi.commands
 var Board = GrovePi.board
 
 /* Access analog sensor module */
-var SoundSensor = GrovePi.sensors.LightAnalog
+var SoundSensor = GrovePi.sensors.LoudnessAnalog
 var init = false;
+var avgSoundSensor = 0;
 
 const sampleSize = 500;
 
@@ -38,7 +39,7 @@ const sampleSize = 500;
   we specify that in the exports of this module that 'sensor' maps to the function named 'sensor'
  */
 module.exports = {
-  sensor: getSensorData
+    sensor: getSensorData
 };
 
 /*
@@ -47,7 +48,12 @@ module.exports = {
   Param 1: a handle to the request object
   Param 2: a handle to the response object
  */
-var soundSensor
+var soundSensor;
+
+function startReading(){
+    if(init != true)
+        setInterval(readSensor, 1500);
+}
 
 function getSensorData(req, res) {
 
@@ -59,26 +65,20 @@ function getSensorData(req, res) {
         },
         onInit: function(response) {
             if (response) {
-                console.log('GrovePi Version :: ' + board.version())
-                soundSensor = new SoundSensor(0)
-
+                console.log('GrovePi Version :: ' + board.version());
+                soundSensor = new SoundSensor(0);
+                soundSensor.start()
+                console.log('GrovePi Loudnes Sensor initialized.');
             }
         }
-    })
+    });
 
-   if(init == false){
-       board.init();
-       init = true;
-   }
-
-    var avgSoundSensor = 0
-    for (var i = 0; i < sampleSize; i++) {
-        var temp = soundSensor.read()
-        if (!isNaN(temp))
-            avgSoundSensor += temp
+    if(init == false){
+        board.init();
+        init = true;
     }
 
-    var dataStr = [{"soundsensor" : Math.round(avgSoundSensor / sampleSize)}]
-
-    res.json(dataStr)
+    var avgSoundSensor = soundSensor.readAvgMax();
+    var dataStr = [{"soundsensor" : avgSoundSensor}];
+    res.json(dataStr);
 }
