@@ -20,10 +20,9 @@ var Commands = GrovePi.commands
 var Board = GrovePi.board
 
 /* Access analog sensor module */
-var SoundSensor = GrovePi.sensors.LightAnalog
-var init = false;
-
-const sampleSize = 500;
+var SoundSensor = GrovePi.sensors.LoudnessAnalog
+var result = 0;
+var CONST_NOISE = 190;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -38,7 +37,7 @@ const sampleSize = 500;
   we specify that in the exports of this module that 'sensor' maps to the function named 'sensor'
  */
 module.exports = {
-  sensor: getSensorData
+    sensor: getSensorData
 };
 
 /*
@@ -47,38 +46,36 @@ module.exports = {
   Param 1: a handle to the request object
   Param 2: a handle to the response object
  */
-var soundSensor
+var soundSensor;
+
+var board = new Board({
+    debug: true,
+    onError: function(err) {
+        console.log('Something wrong just happened')
+        console.log(err)
+    },
+    onInit: function(response) {
+        if (response) {
+            console.log('GrovePi Version :: ' + board.version());
+            soundSensor = new SoundSensor(0);
+            soundSensor.start()
+            console.log('GrovePi Loudness Sensor initialized.');
+        }
+    }
+});
+
+board.init();
+
+setInterval(function () {
+    result = soundSensor.readAvgMax();
+    result.avg = Math.round(result.avg) - CONST_NOISE;
+    result.max = Math.round(result.max) - CONST_NOISE;
+    console.log("Accessing sound sensor: avg=" + result.avg + " max=" + result.max)
+}, 5000);
+
+
 
 function getSensorData(req, res) {
-
-    var board = new Board({
-        debug: true,
-        onError: function(err) {
-            console.log('Something wrong just happened')
-            console.log(err)
-        },
-        onInit: function(response) {
-            if (response) {
-                console.log('GrovePi Version :: ' + board.version())
-                soundSensor = new SoundSensor(0)
-
-            }
-        }
-    })
-
-   if(init == false){
-       board.init();
-       init = true;
-   }
-
-    var avgSoundSensor = 0
-    for (var i = 0; i < sampleSize; i++) {
-        var temp = soundSensor.read()
-        if (!isNaN(temp))
-            avgSoundSensor += temp
-    }
-
-    var dataStr = [{"soundsensor" : Math.round(avgSoundSensor / sampleSize)}]
-
-    res.json(dataStr)
+    var dataStr = [{"soundsensor" : result}];
+    res.json(dataStr);
 }
