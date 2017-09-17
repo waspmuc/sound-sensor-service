@@ -1,62 +1,56 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "version": "0.0.4",
-    "title": "Sound Sensor Service on RaspberryPi"
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This sensor is located under the Tischkicker and measures the sound strength of the environment. Find detailed specification of the sensor here [Grove-Sound-Sensor](http://wiki.seeed.cc/Grove-Sound_Sensor/#specifications). Currently the sensor reads every five seconds a new value. The response contains the current value and the max value of the past five seconds. Depending on the game intensity the max value will increase significantly. Use this sensor preferably as reference for your other sensor results, because it measures the whole room including the other Tischkicker ;).",
+    "version" : "1.0.0",
+    "title" : "Sound Sensor Service"
   },
-  "host": "localhost:10020",
-  "basePath": "/",
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
-  "paths": {
-    "/data": {
-      "get": {
-        "description": "Returns current value of the sound sensor to the caller",
-        "operationId": "sensor",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/sensorResponse"
+  "host" : "kicker-aka.jambit.com/soundsensor",
+  "basePath" : "/",
+  "schemes" : [ "http" ],
+  "consumes" : [ "application/json" ],
+  "produces" : [ "application/json" ],
+  "paths" : {
+    "/data" : {
+      "get" : {
+        "description" : "Returns current value of the sound sensor to the caller",
+        "operationId" : "sensor",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "schema" : {
+              "$ref" : "#/definitions/sensorResponse"
             }
           },
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+          "default" : {
+            "description" : "Error",
+            "schema" : {
+              "$ref" : "#/definitions/ErrorResponse"
             }
           }
         }
-      }
+      },
+      "x-swagger-router-controller" : "SensorController"
     },
-    "/swagger": {}
+    "/swagger" : {
+      "x-swagger-pipe" : "swagger_raw"
+    }
   },
-  "definitions": {
-    "sensorResponse": {
-      "required": [
-        "message"
-      ],
-      "properties": {
-        "message": {
-          "type": "string"
+  "definitions" : {
+    "sensorResponse" : {
+      "required" : [ "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string"
         }
       }
     },
-    "ErrorResponse": {
-      "required": [
-        "message"
-      ],
-      "properties": {
-        "message": {
-          "type": "string"
+    "ErrorResponse" : {
+      "required" : [ "message" ],
+      "properties" : {
+        "message" : {
+          "type" : "string"
         }
       }
     }
