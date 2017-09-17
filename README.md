@@ -1,2 +1,2 @@
-# Swagger JSON
-This is a swagger JSON built by the [swagger-codegen](https://github.com/swagger-api/swagger-codegen) project.
+# Sound Sensor Service
+This sensor is located under the Tischkicker and measures the sound strength of the environment. Find detailed specification of the sensor here [Grove-Sound-Sensor](http://wiki.seeed.cc/Grove-Sound_Sensor/#specifications). Currently the sensor reads every five seconds a new value. The response contains the current value and the max value of the past five seconds. Depending on the game intensity the max value will increase significantly. Use this sensor preferably as reference for your other sensor results, because it measures the whole room including the other Tischkicker ;). 
