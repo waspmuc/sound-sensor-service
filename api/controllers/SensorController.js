@@ -21,10 +21,8 @@ var Board = GrovePi.board
 
 /* Access analog sensor module */
 var SoundSensor = GrovePi.sensors.LoudnessAnalog
-var init = false;
-var avgSoundSensor = 0;
-
-const sampleSize = 500;
+var result = 0;
+var CONST_NOISE = 190;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
@@ -50,35 +48,34 @@ module.exports = {
  */
 var soundSensor;
 
-function startReading(){
-    if(init != true)
-        setInterval(readSensor, 1500);
-}
+var board = new Board({
+    debug: true,
+    onError: function(err) {
+        console.log('Something wrong just happened')
+        console.log(err)
+    },
+    onInit: function(response) {
+        if (response) {
+            console.log('GrovePi Version :: ' + board.version());
+            soundSensor = new SoundSensor(0);
+            soundSensor.start()
+            console.log('GrovePi Loudness Sensor initialized.');
+        }
+    }
+});
+
+board.init();
+
+setInterval(function () {
+    result = soundSensor.readAvgMax();
+    result.avg = Math.round(result.avg) - CONST_NOISE;
+    result.max = Math.round(result.max) - CONST_NOISE;
+    console.log("Accessing sound sensor: avg=" + result.avg + " max=" + result.max)
+}, 5000);
+
+
 
 function getSensorData(req, res) {
-
-    var board = new Board({
-        debug: true,
-        onError: function(err) {
-            console.log('Something wrong just happened')
-            console.log(err)
-        },
-        onInit: function(response) {
-            if (response) {
-                console.log('GrovePi Version :: ' + board.version());
-                soundSensor = new SoundSensor(0);
-                soundSensor.start()
-                console.log('GrovePi Loudnes Sensor initialized.');
-            }
-        }
-    });
-
-    if(init == false){
-        board.init();
-        init = true;
-    }
-
-    var avgSoundSensor = soundSensor.readAvgMax();
-    var dataStr = [{"soundsensor" : avgSoundSensor}];
+    var dataStr = [{"soundsensor" : result}];
     res.json(dataStr);
 }
