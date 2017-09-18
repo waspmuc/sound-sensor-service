@@ -22,7 +22,7 @@ var Board = GrovePi.board
 /* Access analog sensor module */
 var SoundSensor = GrovePi.sensors.LoudnessAnalog
 var result = 0;
-var CONST_NOISE = 190;
+var CONST_NOISE = 90;
 
 /*
  Once you 'require' a module you can reference the things that it exports.  These are defined in module.exports.
