@@ -5,8 +5,8 @@
     "version" : "1.0.0",
     "title" : "Sound Sensor Service"
   },
-  "host" : "kicker-aka.jambit.com/soundsensor",
-  "basePath" : "/",
+  "host" : "kicker-aka.jambit.com/",
+  "basePath" : "soundsensor/v1",
   "schemes" : [ "http" ],
   "consumes" : [ "application/json" ],
   "produces" : [ "application/json" ],
